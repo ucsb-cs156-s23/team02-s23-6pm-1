@@ -1,18 +1,8 @@
 # STARTER-team02
 
-```
-TODO: Adjust the link to the deployed production app 
-for your team here, then remove this TODO.
-```
+* Production: <https://team02-prod.dokku-05.cs.ucsb.edu>
 
-* Production: <https://team02-prod.dokku-xx.cs.ucsb.edu>
-
-```
-TODO: Adjust the link to the deployed qa app 
-for your team here, then remove this TODO.
-```
-
-* QA: <https://team02-qa.dokku-xx.cs.ucsb.edu>
+* QA: <https://team02-qa.dokku-05.cs.ucsb.edu>
 
 
 # Configuring GitHub Pages for the documentation
