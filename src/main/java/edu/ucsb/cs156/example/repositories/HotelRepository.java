@@ -7,5 +7,5 @@ import org.springframework.stereotype.Repository;
 
 
 @Repository
-public interface UCSBDateRepository extends CrudRepository<Hotel, Long> {
+public interface HotelRepository extends CrudRepository<Hotel, Long> {
 }
