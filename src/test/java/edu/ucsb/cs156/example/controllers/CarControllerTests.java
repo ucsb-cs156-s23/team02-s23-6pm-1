@@ -2,6 +2,7 @@ package edu.ucsb.cs156.example.controllers;
 
 import edu.ucsb.cs156.example.repositories.UserRepository;
 import edu.ucsb.cs156.example.testconfig.TestConfig;
+import org.springframework.http.MediaType;
 import edu.ucsb.cs156.example.ControllerTestCase;
 import edu.ucsb.cs156.example.entities.Car;
 import edu.ucsb.cs156.example.repositories.CarRepository;
@@ -229,30 +230,27 @@ public class CarControllerTests extends ControllerTestCase {
                 Map<String, Object> json = responseToJson(response);
                 assertEquals("UCSBDate with id 15 not found", json.get("message"));
         }
+        */
 
         @WithMockUser(roles = { "ADMIN", "USER" })
         @Test
-        public void admin_can_edit_an_existing_ucsbdate() throws Exception {
+        public void admin_can_edit_an_existing_car() throws Exception {
                 // arrange
+                Car car1 = Car.builder()
+                            .description("great car!")
+                            .horsepower("300 hp")
+                            .model("Ford Mustang")
+                            .build();
+                
+                Car car1Edited = Car.builder()
+                            .description("fast car!")
+                            .horsepower("705 hp")
+                            .model("Dodge Charger")
+                            .build();
 
-                LocalDateTime ldt1 = LocalDateTime.parse("2022-01-03T00:00:00");
-                LocalDateTime ldt2 = LocalDateTime.parse("2023-01-03T00:00:00");
+                String requestBody = mapper.writeValueAsString(car1Edited);
 
-                UCSBDate ucsbDateOrig = UCSBDate.builder()
-                                .name("firstDayOfClasses")
-                                .quarterYYYYQ("20222")
-                                .localDateTime(ldt1)
-                                .build();
-
-                UCSBDate ucsbDateEdited = UCSBDate.builder()
-                                .name("firstDayOfFestivus")
-                                .quarterYYYYQ("20232")
-                                .localDateTime(ldt2)
-                                .build();
-
-                String requestBody = mapper.writeValueAsString(ucsbDateEdited);
-
-                when(ucsbDateRepository.findById(eq(67L))).thenReturn(Optional.of(ucsbDateOrig));
+                when(carRepository.findById(eq(67L))).thenReturn(Optional.of(car1));
 
                 // act
                 MvcResult response = mockMvc.perform(
@@ -264,28 +262,26 @@ public class CarControllerTests extends ControllerTestCase {
                                 .andExpect(status().isOk()).andReturn();
 
                 // assert
-                verify(ucsbDateRepository, times(1)).findById(67L);
-                verify(ucsbDateRepository, times(1)).save(ucsbDateEdited); // should be saved with correct user
+                verify(carRepository, times(1)).findById(67L);
+                verify(carRepository, times(1)).save(car1Edited); // should be saved with correct user
                 String responseString = response.getResponse().getContentAsString();
                 assertEquals(requestBody, responseString);
         }
 
         @WithMockUser(roles = { "ADMIN", "USER" })
         @Test
-        public void admin_cannot_edit_ucsbdate_that_does_not_exist() throws Exception {
+        public void admin_cannot_edit_car_that_does_not_exist() throws Exception {
                 // arrange
+                Car car1Edited = Car.builder()
+                        .description("great car!")
+                        .horsepower("300 hp")
+                        .model("Ford Mustang")
+                        .build();
 
-                LocalDateTime ldt1 = LocalDateTime.parse("2022-01-03T00:00:00");
+        
+                String requestBody = mapper.writeValueAsString(car1Edited);
 
-                UCSBDate ucsbEditedDate = UCSBDate.builder()
-                                .name("firstDayOfClasses")
-                                .quarterYYYYQ("20222")
-                                .localDateTime(ldt1)
-                                .build();
-
-                String requestBody = mapper.writeValueAsString(ucsbEditedDate);
-
-                when(ucsbDateRepository.findById(eq(67L))).thenReturn(Optional.empty());
+                when(carRepository.findById(eq(67L))).thenReturn(Optional.empty());
 
                 // act
                 MvcResult response = mockMvc.perform(
@@ -297,10 +293,10 @@ public class CarControllerTests extends ControllerTestCase {
                                 .andExpect(status().isNotFound()).andReturn();
 
                 // assert
-                verify(ucsbDateRepository, times(1)).findById(67L);
+                verify(carRepository, times(1)).findById(67L);
                 Map<String, Object> json = responseToJson(response);
-                assertEquals("UCSBDate with id 67 not found", json.get("message"));
+                assertEquals("Car with id 67 not found", json.get("message"));
 
         }
-    */
+    
 }
