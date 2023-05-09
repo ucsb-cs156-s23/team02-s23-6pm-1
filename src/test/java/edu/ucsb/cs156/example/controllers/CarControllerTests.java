@@ -161,9 +161,9 @@ public class CarControllerTests extends ControllerTestCase {
                 // arrange
 
                 Car car1 = Car.builder()
-                        .description("great car!")
-                        .horsepower("300 hp")
-                        .model("Ford Mustang")
+                        .description("great%20car!")
+                        .horsepower("300%20hp")
+                        .model("Ford%20Mustang")
                         .build();
  
 
