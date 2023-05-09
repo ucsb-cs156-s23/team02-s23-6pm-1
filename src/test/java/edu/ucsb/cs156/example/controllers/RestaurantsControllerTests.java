@@ -14,6 +14,8 @@ import org.springframework.test.web.servlet.MvcResult;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Map;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.eq;
@@ -48,6 +50,11 @@ public class RestaurantsControllerTests extends ControllerTestCase {
                 .andExpect(status().is(200)); // logged
     }
 
+    @Test
+    public void logged_out_users_cannot_get_by_id() throws Exception {
+        mockMvc.perform(get("/api/restaurants?id=7"))
+                .andExpect(status().is(403)); // logged out users can't get by id
+    }
     // Authorization tests for /api/restaurants/post
 
     @Test
@@ -64,6 +71,53 @@ public class RestaurantsControllerTests extends ControllerTestCase {
     }
 
     // // Tests with mocks for database actions
+
+    @WithMockUser(roles = { "USER" })
+    @Test
+    public void test_that_logged_in_user_can_get_by_id_when_the_id_exists() throws Exception {
+
+        // arrange
+        var restaurant = Restaurant.builder()
+                .name("a restaurant")
+                .address("1234 State St")
+                .description("a description")
+                .build();
+
+
+        when(restaurantRepository.findById(eq(7L))).thenReturn(Optional.of(restaurant));
+
+        // act
+        MvcResult response = mockMvc.perform(get("/api/restaurants?id=7"))
+                .andExpect(status().isOk()).andReturn();
+
+        // assert
+
+        verify(restaurantRepository, times(1)).findById(eq(7L));
+        String expectedJson = mapper.writeValueAsString(restaurant);
+        String responseString = response.getResponse().getContentAsString();
+        assertEquals(expectedJson, responseString);
+    }
+
+    @WithMockUser(roles = { "USER" })
+    @Test
+    public void test_that_logged_in_user_can_get_by_id_when_the_id_does_not_exist() throws Exception {
+
+        // arrange
+
+        when(restaurantRepository.findById(eq(7L))).thenReturn(Optional.empty());
+
+        // act
+        MvcResult response = mockMvc.perform(get("/api/restaurants?id=7"))
+                .andExpect(status().isNotFound()).andReturn();
+
+        // assert
+
+        verify(restaurantRepository, times(1)).findById(eq(7L));
+        Map<String, Object> json = responseToJson(response);
+        assertEquals("EntityNotFoundException", json.get("type"));
+        assertEquals("Restaurant with id 7 not found", json.get("message"));
+    }
+
 
     @WithMockUser(roles = {"USER"})
     @Test
