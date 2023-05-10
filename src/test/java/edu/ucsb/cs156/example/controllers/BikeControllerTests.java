@@ -14,6 +14,8 @@ import org.springframework.test.web.servlet.MvcResult;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Map;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.eq;
@@ -47,6 +49,12 @@ public class BikeControllerTests extends ControllerTestCase {
                                 .andExpect(status().is(200)); // logged
         }
 
+        @Test
+        public void logged_out_users_cannot_get_by_id() throws Exception {
+                mockMvc.perform(get("/api/bikes?id=7"))
+                        .andExpect(status().is(403)); // logged out users can't get by id
+        }
+
         // Authorization tests for /api/bikes/post
         // (Perhaps should also have these for put and delete)
 
@@ -64,6 +72,52 @@ public class BikeControllerTests extends ControllerTestCase {
         }
 
         // Tests with mocks for database actions
+
+        @WithMockUser(roles = { "USER" })
+        @Test
+        public void test_that_logged_in_user_can_get_by_id_when_the_id_exists() throws Exception {
+
+                // arrange
+                Bike bike = Bike.builder()
+                        .model("Among Us")
+                        .manufacturer("Innersloth")
+                        .numGears(69)
+                        .id(0L)
+                        .build();
+
+                when(bikeRepository.findById(eq(0L))).thenReturn(Optional.of(bike));
+
+                // act
+                MvcResult response = mockMvc.perform(get("/api/bikes?id=0"))
+                        .andExpect(status().isOk()).andReturn();
+
+                // assert
+
+                verify(bikeRepository, times(1)).findById(eq(0L));
+                String expectedJson = mapper.writeValueAsString(bike);
+                String responseString = response.getResponse().getContentAsString();
+                assertEquals(expectedJson, responseString);
+        }
+
+        @WithMockUser(roles = { "USER" })
+        @Test
+        public void test_that_logged_in_user_can_get_by_id_when_the_id_does_not_exist() throws Exception {
+
+                // arrange
+
+                when(bikeRepository.findById(eq(7L))).thenReturn(Optional.empty());
+
+                // act
+                MvcResult response = mockMvc.perform(get("/api/bikes?id=7"))
+                        .andExpect(status().isNotFound()).andReturn();
+
+                // assert
+
+                verify(bikeRepository, times(1)).findById(eq(7L));
+                Map<String, Object> json = responseToJson(response);
+                assertEquals("EntityNotFoundException", json.get("type"));
+                assertEquals("Bike with id 7 not found", json.get("message"));
+        }
 
         @WithMockUser(roles = { "USER" })
         @Test
