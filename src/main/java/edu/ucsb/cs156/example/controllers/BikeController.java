@@ -2,6 +2,7 @@ package edu.ucsb.cs156.example.controllers;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import edu.ucsb.cs156.example.entities.Bike;
+import edu.ucsb.cs156.example.errors.EntityNotFoundException;
 import edu.ucsb.cs156.example.repositories.BikeRepository;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -25,6 +26,16 @@ public class BikeController extends ApiController {
     @GetMapping("/all")
     public Iterable<Bike> allBikes() {
         return bikeRepository.findAll();
+    }
+
+    @ApiOperation(value = "Get a single bike")
+    @PreAuthorize("hasRole('ROLE_USER')")
+    @GetMapping("")
+    public Bike getById(
+            @ApiParam("id") @RequestParam Long id) {
+
+        return bikeRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException(Bike.class, id));
     }
 
     @ApiOperation(value = "Create a new bike")
