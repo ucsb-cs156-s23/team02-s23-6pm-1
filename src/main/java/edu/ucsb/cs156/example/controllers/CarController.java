@@ -1,6 +1,5 @@
 package edu.ucsb.cs156.example.controllers;
 
-import javax.smartcardio.CardException;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +10,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 
@@ -20,13 +20,10 @@ import edu.ucsb.cs156.example.repositories.CarRepository;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
-import lombok.extern.slf4j.Slf4j;
 
 @Api(description = "cars")
 @RequestMapping("/api/cars")
 @RestController
-@Slf4j
 public class CarController extends ApiController {
 
     @Autowired
