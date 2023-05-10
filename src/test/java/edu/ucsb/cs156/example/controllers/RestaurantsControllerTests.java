@@ -14,13 +14,14 @@ import org.springframework.test.web.servlet.MvcResult;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Map;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(controllers = RestaurantsController.class)
@@ -126,4 +127,53 @@ public class RestaurantsControllerTests extends ControllerTestCase {
         String responseString = response.getResponse().getContentAsString();
         assertEquals(expectedJson, responseString);
     }
+
+    @WithMockUser(roles = {"ADMIN", "USER"})
+    @Test
+    public void admin_can_delete_a_date() throws Exception {
+        // arrange
+
+        var restaurant1 = Restaurant.builder()
+                .name("a restaurant")
+                .address("1234 State St")
+                .description("a description")
+                .build();
+
+
+        when(restaurantRepository.findById(eq(15L))).thenReturn(Optional.of(restaurant1));
+
+        // act
+        MvcResult response = mockMvc.perform(
+                        delete("/api/restaurants?id=15")
+                                .with(csrf()))
+                .andExpect(status().isOk()).andReturn();
+
+        // assert
+        verify(restaurantRepository, times(1)).findById(15L);
+        verify(restaurantRepository, times(1)).delete(any());
+
+        Map<String, Object> json = responseToJson(response);
+        assertEquals("Restaurant with id 15 deleted", json.get("message"));
+    }
+
+    @WithMockUser(roles = {"ADMIN", "USER"})
+    @Test
+    public void admin_tries_to_delete_non_existant_restaurant_and_gets_right_error_message()
+            throws Exception {
+        // arrange
+
+        when(restaurantRepository.findById(eq(15L))).thenReturn(Optional.empty());
+
+        // act
+        MvcResult response = mockMvc.perform(
+                        delete("/api/restaurants?id=15")
+                                .with(csrf()))
+                .andExpect(status().isNotFound()).andReturn();
+
+        // assert
+        verify(restaurantRepository, times(1)).findById(15L);
+        Map<String, Object> json = responseToJson(response);
+        assertEquals("Restaurant with id 15 not found", json.get("message"));
+    }
+
 }
