@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
 import edu.ucsb.cs156.example.entities.Car;
+import edu.ucsb.cs156.example.errors.EntityNotFoundException;
 import edu.ucsb.cs156.example.repositories.CarRepository;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -32,6 +33,17 @@ public class CarController extends ApiController {
     public Iterable<Car> allCars() {
         Iterable<Car> cars = carRepository.findAll();
         return cars;
+    }
+
+    @ApiOperation(value = "Get a single car")
+    @PreAuthorize("hasRole('ROLE_USER')")
+    @GetMapping("")
+    public Car getById(
+            @ApiParam("id") @RequestParam Long id) {
+        Car car = carRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException(Car.class, id));
+
+        return car;
     }
 
     @ApiOperation(value = "Create a new car")

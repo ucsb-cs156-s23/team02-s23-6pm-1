@@ -53,13 +53,13 @@ public class CarControllerTests extends ControllerTestCase {
                 mockMvc.perform(get("/api/cars/all"))
                                 .andExpect(status().is(200)); // logged
         }
-        /* 
+        
         @Test
         public void logged_out_users_cannot_get_by_id() throws Exception {
                 mockMvc.perform(get("/api/cars?id=7"))
                                 .andExpect(status().is(403)); // logged out users can't get by id
         }
-        */
+        
         // Authorization tests for /api/cars/post
         // (Perhaps should also have these for put and delete)
 
@@ -75,7 +75,7 @@ public class CarControllerTests extends ControllerTestCase {
                 mockMvc.perform(post("/api/cars/post"))
                                 .andExpect(status().is(403)); // only admins can post
         }
-        /* 
+        
         // // Tests with mocks for database actions
 
         @WithMockUser(roles = { "USER" })
@@ -121,7 +121,7 @@ public class CarControllerTests extends ControllerTestCase {
                 assertEquals("EntityNotFoundException", json.get("type"));
                 assertEquals("Car with id 7 not found", json.get("message"));
         }
-        */
+        
         @WithMockUser(roles = { "USER" })
         @Test
         public void logged_in_user_can_get_all_cars() throws Exception {
