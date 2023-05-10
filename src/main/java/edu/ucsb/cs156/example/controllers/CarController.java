@@ -4,6 +4,7 @@ import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -83,6 +84,18 @@ public class CarController extends ApiController {
         carRepository.save(car);
 
         return car;
+    }
+
+    @ApiOperation(value = "Delete a car")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @DeleteMapping("")
+    public Object deleteCar(
+            @ApiParam("id") @RequestParam Long id) {
+        Car car = carRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException(Car.class, id));
+
+        carRepository.delete(car);
+        return genericMessage("Car with id %s deleted".formatted(id));
     }
    
 }

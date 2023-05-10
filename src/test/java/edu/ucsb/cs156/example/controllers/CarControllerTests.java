@@ -26,6 +26,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -182,10 +183,10 @@ public class CarControllerTests extends ControllerTestCase {
                 String responseString = response.getResponse().getContentAsString();
                 assertEquals(expectedJson, responseString);
         }
-        /* 
+        
         @WithMockUser(roles = { "ADMIN", "USER" })
         @Test
-        public void admin_can_delete_a_date() throws Exception {
+        public void admin_can_delete_a_car() throws Exception {
                 // arrange
 
                 Car car1 = Car.builder()
@@ -213,11 +214,11 @@ public class CarControllerTests extends ControllerTestCase {
 
         @WithMockUser(roles = { "ADMIN", "USER" })
         @Test
-        public void admin_tries_to_delete_non_existant_ucsbdate_and_gets_right_error_message()
+        public void admin_tries_to_delete_non_existant_car_and_gets_right_error_message()
                         throws Exception {
                 // arrange
 
-                when(ucsbDateRepository.findById(eq(15L))).thenReturn(Optional.empty());
+                when(carRepository.findById(eq(15L))).thenReturn(Optional.empty());
 
                 // act
                 MvcResult response = mockMvc.perform(
@@ -226,11 +227,11 @@ public class CarControllerTests extends ControllerTestCase {
                                 .andExpect(status().isNotFound()).andReturn();
 
                 // assert
-                verify(ucsbDateRepository, times(1)).findById(15L);
+                verify(carRepository, times(1)).findById(15L);
                 Map<String, Object> json = responseToJson(response);
-                assertEquals("UCSBDate with id 15 not found", json.get("message"));
+                assertEquals("Car with id 15 not found", json.get("message"));
         }
-        */
+        
 
         @WithMockUser(roles = { "ADMIN", "USER" })
         @Test
