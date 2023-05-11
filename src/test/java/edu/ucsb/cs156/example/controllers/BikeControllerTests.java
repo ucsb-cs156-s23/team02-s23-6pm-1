@@ -222,7 +222,7 @@ public class BikeControllerTests extends ControllerTestCase {
 
         @WithMockUser(roles = { "ADMIN", "USER" })
         @Test
-        public void admin_cannot_edit_ucsbdate_that_does_not_exist() throws Exception {
+        public void admin_cannot_edit_bike_that_does_not_exist() throws Exception {
                 // arrange
                 Bike bikeEdited = Bike.builder()
                         .model("Among Us 2: The More The Sussier")
