@@ -236,26 +236,22 @@ public class HotelsControllerTests extends ControllerTestCase {
                 assertEquals("Hotel with id 15 not found", json.get("message"));
         }
 
-        /*
         @WithMockUser(roles = { "ADMIN", "USER" })
         @Test
-        public void admin_can_edit_an_existing_ucsbdate() throws Exception {
+        public void admin_can_edit_an_existing_hotel() throws Exception {
                 // arrange
 
-                LocalDateTime ldt1 = LocalDateTime.parse("2022-01-03T00:00:00");
-                LocalDateTime ldt2 = LocalDateTime.parse("2023-01-03T00:00:00");
-
                 Hotel hotelOrig = Hotel.builder()
-                .name("Mariott")
-                .address("Goleta, California")
-                .description("Nice")
+                .name("Courtyard by Marriott Santa Barbara Goleta")
+                .address("401 Storke Rd, Goleta, CA 93117")
+                .description("3-star hotel")
                 .build();
 
                 Hotel hotelEdited = Hotel.builder()
-                                .name("firstDayOfFestivus")
-                                .quarterYYYYQ("20232")
-                                .localDateTime(ldt2)
-                                .build();
+                .name("Hyatt Place Santa Barbara")
+                .address("4111 State St, Santa Barbara, CA 93110")
+                .description("3-star hotel")
+                .build();
 
                 String requestBody = mapper.writeValueAsString(hotelEdited);
 
@@ -282,15 +278,13 @@ public class HotelsControllerTests extends ControllerTestCase {
         public void admin_cannot_edit_ucsbdate_that_does_not_exist() throws Exception {
                 // arrange
 
-                LocalDateTime ldt1 = LocalDateTime.parse("2022-01-03T00:00:00");
+                Hotel hotelEdited = Hotel.builder()
+                .name("Courtyard by Marriott Santa Barbara Goleta")
+                .address("401 Storke Rd, Goleta, CA 93117")
+                .description("3-star hotel")
+                .build();
 
-                Hotel ucsbEditedDate = Hotel.builder()
-                                .name("firstDayOfClasses")
-                                .quarterYYYYQ("20222")
-                                .localDateTime(ldt1)
-                                .build();
-
-                String requestBody = mapper.writeValueAsString(ucsbEditedDate);
+                String requestBody = mapper.writeValueAsString(hotelEdited);
 
                 when(hotelRepository.findById(eq(67L))).thenReturn(Optional.empty());
 
@@ -308,5 +302,5 @@ public class HotelsControllerTests extends ControllerTestCase {
                 Map<String, Object> json = responseToJson(response);
                 assertEquals("Hotel with id 67 not found", json.get("message"));
 
-        }*/
+        }
 }
