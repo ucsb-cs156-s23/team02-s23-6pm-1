@@ -40,7 +40,7 @@ public class BookControllerTests extends ControllerTestCase {
         @MockBean
         UserRepository userRepository;
 
-        // Authorization tests for /api/ucsbdiningcommons/admin/all
+        // Authorization tests for /api/book/admin/all
 
         @Test
         public void logged_out_users_cannot_get_all() throws Exception {
@@ -55,12 +55,12 @@ public class BookControllerTests extends ControllerTestCase {
                                 .andExpect(status().is(200)); // logged
         }
 
-        /*
+        
         @Test
         public void logged_out_users_cannot_get_by_id() throws Exception {
-                mockMvc.perform(get("/api/ucsbdiningcommons?code=carrillo"))
+                mockMvc.perform(get("/api/book?id=1"))
                                 .andExpect(status().is(403)); // logged out users can't get by id
-        }*/
+        }
 
         // Authorization tests for /api/book/post
         // (Perhaps should also have these for put and delete)
@@ -79,33 +79,29 @@ public class BookControllerTests extends ControllerTestCase {
         }
 
         // Tests with mocks for database actions
-        /* 
+        
         @WithMockUser(roles = { "USER" })
         @Test
         public void test_that_logged_in_user_can_get_by_id_when_the_id_exists() throws Exception {
 
                 // arrange
 
-                UCSBDiningCommons commons = UCSBDiningCommons.builder()
-                                .name("Carrillo")
-                                .code("carrillo")
-                                .hasSackMeal(false)
-                                .hasTakeOutMeal(false)
-                                .hasDiningCam(true)
-                                .latitude(34.409953)
-                                .longitude(-119.85277)
+                Book greenEggs = Book.builder()
+                                .name("GreenEggsAndHam")
+                                .genre("Poetry")
+                                .author("DrSeuss")
                                 .build();
 
-                when(ucsbDiningCommonsRepository.findById(eq("carrillo"))).thenReturn(Optional.of(commons));
+                when(bookRepository.findById(1L)).thenReturn(Optional.of(greenEggs));
 
                 // act
-                MvcResult response = mockMvc.perform(get("/api/ucsbdiningcommons?code=carrillo"))
+                MvcResult response = mockMvc.perform(get("/api/book?id=1"))
                                 .andExpect(status().isOk()).andReturn();
 
                 // assert
 
-                verify(ucsbDiningCommonsRepository, times(1)).findById(eq("carrillo"));
-                String expectedJson = mapper.writeValueAsString(commons);
+                verify(bookRepository, times(1)).findById(eq(1L));
+                String expectedJson = mapper.writeValueAsString(greenEggs);
                 String responseString = response.getResponse().getContentAsString();
                 assertEquals(expectedJson, responseString);
         }
@@ -116,20 +112,20 @@ public class BookControllerTests extends ControllerTestCase {
 
                 // arrange
 
-                when(ucsbDiningCommonsRepository.findById(eq("munger-hall"))).thenReturn(Optional.empty());
+                when(bookRepository.findById(-1L)).thenReturn(Optional.empty());
 
                 // act
-                MvcResult response = mockMvc.perform(get("/api/ucsbdiningcommons?code=munger-hall"))
+                MvcResult response = mockMvc.perform(get("/api/book?id=-1"))
                                 .andExpect(status().isNotFound()).andReturn();
 
                 // assert
 
-                verify(ucsbDiningCommonsRepository, times(1)).findById(eq("munger-hall"));
+                verify(bookRepository, times(1)).findById(eq(-1L));
                 Map<String, Object> json = responseToJson(response);
                 assertEquals("EntityNotFoundException", json.get("type"));
-                assertEquals("UCSBDiningCommons with id munger-hall not found", json.get("message"));
+                assertEquals("Book with id -1 not found", json.get("message"));
         }
-        */
+        
         @WithMockUser(roles = { "USER" })
         @Test
         public void logged_in_user_can_get_all_book() throws Exception {
