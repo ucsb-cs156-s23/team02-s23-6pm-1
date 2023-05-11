@@ -12,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+
 @Api(description = "Bike")
 @RequestMapping("/api/bikes")
 @RestController
@@ -53,5 +55,24 @@ public class BikeController extends ApiController {
         bike.setNumGears(numGears);
 
         return bikeRepository.save(bike);
+    }
+
+    @ApiOperation(value = "Update a single bike")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PutMapping("")
+    public Bike bike(
+            @ApiParam("id") @RequestParam Long id,
+            @RequestBody @Valid Bike incoming) {
+
+        Bike bike = bikeRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException(Bike.class, id));
+
+        bike.setManufacturer(incoming.getManufacturer());
+        bike.setModel(incoming.getModel());
+        bike.setNumGears(incoming.getNumGears());
+
+        bikeRepository.save(bike);
+
+        return bike;
     }
 }
