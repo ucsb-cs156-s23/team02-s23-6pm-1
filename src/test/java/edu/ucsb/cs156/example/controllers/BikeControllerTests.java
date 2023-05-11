@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
+import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MvcResult;
 
@@ -181,4 +182,73 @@ public class BikeControllerTests extends ControllerTestCase {
                 String responseString = response.getResponse().getContentAsString();
                 assertEquals(expectedJson, responseString);
         }
+        @WithMockUser(roles = { "ADMIN", "USER" })
+        @Test
+        public void admin_can_edit_an_existing_bike() throws Exception {
+                // arrange
+                Bike bike = Bike.builder()
+                        .model("Among Us")
+                        .manufacturer("Innersloth")
+                        .numGears(69)
+                        .id(0L)
+                        .build();
+
+                Bike bikeEdited = Bike.builder()
+                        .model("Among Us 2: The More The Sussier")
+                        .manufacturer("Innersloth 2")
+                        .numGears(69^2)
+                        .id(0L)
+                        .build();
+
+                String requestBody = mapper.writeValueAsString(bikeEdited);
+
+                when(bikeRepository.findById(eq(0L))).thenReturn(Optional.of(bike));
+
+                // act
+                MvcResult response = mockMvc.perform(
+                                put("/api/bikes?id=0")
+                                        .contentType(MediaType.APPLICATION_JSON)
+                                        .characterEncoding("utf-8")
+                                        .content(requestBody)
+                                        .with(csrf()))
+                        .andExpect(status().isOk()).andReturn();
+
+                // assert
+                verify(bikeRepository, times(1)).findById(0L);
+                verify(bikeRepository, times(1)).save(bikeEdited); // should be saved with correct user
+                String responseString = response.getResponse().getContentAsString();
+                assertEquals(requestBody, responseString);
+        }
+
+        @WithMockUser(roles = { "ADMIN", "USER" })
+        @Test
+        public void admin_cannot_edit_bike_that_does_not_exist() throws Exception {
+                // arrange
+                Bike bikeEdited = Bike.builder()
+                        .model("Among Us 2: The More The Sussier")
+                        .manufacturer("Innersloth 2")
+                        .numGears(69^2)
+                        .id(0L)
+                        .build();
+
+                String requestBody = mapper.writeValueAsString(bikeEdited);
+
+                when(bikeRepository.findById(eq(0L))).thenReturn(Optional.empty());
+
+                // act
+                MvcResult response = mockMvc.perform(
+                                put("/api/bikes?id=0")
+                                        .contentType(MediaType.APPLICATION_JSON)
+                                        .characterEncoding("utf-8")
+                                        .content(requestBody)
+                                        .with(csrf()))
+                        .andExpect(status().isNotFound()).andReturn();
+
+                // assert
+                verify(bikeRepository, times(1)).findById(0L);
+                Map<String, Object> json = responseToJson(response);
+                assertEquals("Bike with id 0 not found", json.get("message"));
+
+        }
+
 }
