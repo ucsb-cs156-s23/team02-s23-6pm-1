@@ -186,58 +186,54 @@ public class BookControllerTests extends ControllerTestCase {
                 String responseString = response.getResponse().getContentAsString();
                 assertEquals(expectedJson, responseString);
         }
-/* 
+ 
         @WithMockUser(roles = { "ADMIN", "USER" })
         @Test
-        public void admin_can_delete_a_date() throws Exception {
+        public void admin_can_delete_a_book() throws Exception {
                 // arrange
 
-                UCSBDiningCommons portola = UCSBDiningCommons.builder()
-                                .name("Portola")
-                                .code("portola")
-                                .hasSackMeal(true)
-                                .hasTakeOutMeal(true)
-                                .hasDiningCam(true)
-                                .latitude(34.417723)
-                                .longitude(-119.867427)
+                Book greenEggs = Book.builder()
+                                .name("GreenEggsAndHam")
+                                .genre("Poetry")
+                                .author("DrSeuss")
                                 .build();
 
-                when(ucsbDiningCommonsRepository.findById(eq("portola"))).thenReturn(Optional.of(portola));
+                when(bookRepository.findById(eq(1L))).thenReturn(Optional.of(greenEggs));
 
                 // act
                 MvcResult response = mockMvc.perform(
-                                delete("/api/ucsbdiningcommons?code=portola")
+                                delete("/api/book?id=1")
                                                 .with(csrf()))
                                 .andExpect(status().isOk()).andReturn();
 
                 // assert
-                verify(ucsbDiningCommonsRepository, times(1)).findById("portola");
-                verify(ucsbDiningCommonsRepository, times(1)).delete(any());
+                verify(bookRepository, times(1)).findById(1L);
+                verify(bookRepository, times(1)).delete(any());
 
                 Map<String, Object> json = responseToJson(response);
-                assertEquals("UCSBDiningCommons with id portola deleted", json.get("message"));
+                assertEquals("Book with id 1 deleted", json.get("message"));
         }
 
         @WithMockUser(roles = { "ADMIN", "USER" })
         @Test
-        public void admin_tries_to_delete_non_existant_commons_and_gets_right_error_message()
+        public void admin_tries_to_delete_non_existant_book_and_gets_right_error_message()
                         throws Exception {
                 // arrange
 
-                when(ucsbDiningCommonsRepository.findById(eq("munger-hall"))).thenReturn(Optional.empty());
+                when(bookRepository.findById(eq(100L))).thenReturn(Optional.empty());
 
                 // act
                 MvcResult response = mockMvc.perform(
-                                delete("/api/ucsbdiningcommons?code=munger-hall")
+                                delete("/api/book?id=100")
                                                 .with(csrf()))
                                 .andExpect(status().isNotFound()).andReturn();
 
                 // assert
-                verify(ucsbDiningCommonsRepository, times(1)).findById("munger-hall");
+                verify(bookRepository, times(1)).findById(100L);
                 Map<String, Object> json = responseToJson(response);
-                assertEquals("UCSBDiningCommons with id munger-hall not found", json.get("message"));
+                assertEquals("Book with id 100 not found", json.get("message"));
         }
-        */
+        //wip
 
         @WithMockUser(roles = { "ADMIN", "USER" })
         @Test
