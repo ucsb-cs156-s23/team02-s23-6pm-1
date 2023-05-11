@@ -68,4 +68,24 @@ public class BookController extends ApiController {
 
         return savedBook;
     }
+
+    @ApiOperation(value = "Update a single book")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PutMapping("")
+    public Book updateBooks(
+            @ApiParam("id") @RequestParam Long id,
+            @RequestBody @Valid Book incoming) {
+
+        Book books = bookRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException(Book.class, id));
+
+
+        books.setName(incoming.getName());  
+        books.setAuthor(incoming.getAuthor());
+        books.setGenre(incoming.getGenre());
+
+        bookRepository.save(books);
+
+        return books;
+    }
 }

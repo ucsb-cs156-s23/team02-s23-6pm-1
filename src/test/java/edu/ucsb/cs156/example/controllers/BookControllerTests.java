@@ -237,39 +237,32 @@ public class BookControllerTests extends ControllerTestCase {
                 Map<String, Object> json = responseToJson(response);
                 assertEquals("UCSBDiningCommons with id munger-hall not found", json.get("message"));
         }
+        */
 
         @WithMockUser(roles = { "ADMIN", "USER" })
         @Test
-        public void admin_can_edit_an_existing_commons() throws Exception {
+        public void admin_can_edit_an_existing_book() throws Exception {
                 // arrange
 
-                UCSBDiningCommons carrilloOrig = UCSBDiningCommons.builder()
-                                .name("Carrillo")
-                                .code("carrillo")
-                                .hasSackMeal(false)
-                                .hasTakeOutMeal(false)
-                                .hasDiningCam(true)
-                                .latitude(34.409953)
-                                .longitude(-119.85277)
+                Book greenEggsOrig = Book.builder()
+                                .name("GreenEggsAndHam")
+                                .genre("Poetry")
+                                .author("DrSeuss")
                                 .build();
 
-                UCSBDiningCommons carrilloEdited = UCSBDiningCommons.builder()
-                                .name("Carrillo Dining Hall")
-                                .code("carrillo")
-                                .hasSackMeal(true)
-                                .hasTakeOutMeal(true)
-                                .hasDiningCam(false)
-                                .latitude(34.409954)
-                                .longitude(-119.85278)
+                Book greenEggsEdited = Book.builder()
+                                .name("GreenEggsAndHamEdited")
+                                .genre("PoetryEdited")
+                                .author("DrSeussEdited")
                                 .build();
 
-                String requestBody = mapper.writeValueAsString(carrilloEdited);
+                String requestBody = mapper.writeValueAsString(greenEggsEdited);
 
-                when(ucsbDiningCommonsRepository.findById(eq("carrillo"))).thenReturn(Optional.of(carrilloOrig));
+                when(bookRepository.findById(eq(25L))).thenReturn(Optional.of(greenEggsOrig));
 
                 // act
                 MvcResult response = mockMvc.perform(
-                                put("/api/ucsbdiningcommons?code=carrillo")
+                                put("/api/book?id=25")
                                                 .contentType(MediaType.APPLICATION_JSON)
                                                 .characterEncoding("utf-8")
                                                 .content(requestBody)
@@ -277,34 +270,30 @@ public class BookControllerTests extends ControllerTestCase {
                                 .andExpect(status().isOk()).andReturn();
 
                 // assert
-                verify(ucsbDiningCommonsRepository, times(1)).findById("carrillo");
-                verify(ucsbDiningCommonsRepository, times(1)).save(carrilloEdited); // should be saved with updated info
+                verify(bookRepository, times(1)).findById(25L);
+                verify(bookRepository, times(1)).save(greenEggsEdited); // should be saved with updated info
                 String responseString = response.getResponse().getContentAsString();
                 assertEquals(requestBody, responseString);
         }
 
         @WithMockUser(roles = { "ADMIN", "USER" })
         @Test
-        public void admin_cannot_edit_commons_that_does_not_exist() throws Exception {
+        public void admin_cannot_edit_book_that_does_not_exist() throws Exception {
                 // arrange
 
-                UCSBDiningCommons editedCommons = UCSBDiningCommons.builder()
-                                .name("Munger Hall")
-                                .code("munger-hall")
-                                .hasSackMeal(false)
-                                .hasTakeOutMeal(false)
-                                .hasDiningCam(true)
-                                .latitude(34.420799)
-                                .longitude(-119.852617)
+                Book greenEggsEdited = Book.builder()
+                                .name("GreenEggsAndHamEdited")
+                                .genre("PoetryEdited")
+                                .author("DrSeussEdited")
                                 .build();
 
-                String requestBody = mapper.writeValueAsString(editedCommons);
+                String requestBody = mapper.writeValueAsString(greenEggsEdited);
 
-                when(ucsbDiningCommonsRepository.findById(eq("munger-hall"))).thenReturn(Optional.empty());
+                when(bookRepository.findById(eq(25L))).thenReturn(Optional.empty());
 
                 // act
                 MvcResult response = mockMvc.perform(
-                                put("/api/ucsbdiningcommons?code=munger-hall")
+                                put("/api/book?id=25")
                                                 .contentType(MediaType.APPLICATION_JSON)
                                                 .characterEncoding("utf-8")
                                                 .content(requestBody)
@@ -312,10 +301,10 @@ public class BookControllerTests extends ControllerTestCase {
                                 .andExpect(status().isNotFound()).andReturn();
 
                 // assert
-                verify(ucsbDiningCommonsRepository, times(1)).findById("munger-hall");
+                verify(bookRepository, times(1)).findById(25L);
                 Map<String, Object> json = responseToJson(response);
-                assertEquals("UCSBDiningCommons with id munger-hall not found", json.get("message"));
+                assertEquals("Book with id 25 not found", json.get("message"));
 
         }
-        */
+        
 }
