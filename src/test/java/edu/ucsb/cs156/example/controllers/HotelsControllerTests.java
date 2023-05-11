@@ -57,12 +57,11 @@ public class HotelsControllerTests extends ControllerTestCase {
                                 .andExpect(status().is(200)); // logged
         }
 
-        /*
         @Test
         public void logged_out_users_cannot_get_by_id() throws Exception {
                 mockMvc.perform(get("/api/hotels?id=7"))
                                 .andExpect(status().is(403)); // logged out users can't get by id
-        } */
+        }
 
         // Authorization tests for /api/hotels/post
         // (Perhaps should also have these for put and delete)
@@ -81,19 +80,17 @@ public class HotelsControllerTests extends ControllerTestCase {
         }
 
         // // Tests with mocks for database actions
-        /*
         @WithMockUser(roles = { "USER" })
         @Test
         public void test_that_logged_in_user_can_get_by_id_when_the_id_exists() throws Exception {
 
                 // arrange
-                LocalDateTime ldt = LocalDateTime.parse("2022-01-03T00:00:00");
 
                 Hotel hotel = Hotel.builder()
-                                .name("Mariott")
-                                .address("Goleta, California")
-                                .description("Nice")
-                                .build();
+                .name("Courtyard by Marriott Santa Barbara Goleta")
+                .address("401 Storke Rd, Goleta, CA 93117")
+                .description("3-star hotel")
+                .build();
 
                 when(hotelRepository.findById(eq(7L))).thenReturn(Optional.of(hotel));
 
@@ -127,7 +124,7 @@ public class HotelsControllerTests extends ControllerTestCase {
                 Map<String, Object> json = responseToJson(response);
                 assertEquals("EntityNotFoundException", json.get("type"));
                 assertEquals("Hotel with id 7 not found", json.get("message"));
-        } */
+        }
 
         @WithMockUser(roles = { "USER" })
         @Test
