@@ -58,6 +58,18 @@ public class RestaurantsController extends ApiController {
         return restaurantRepository.save(restaurant);
     }
 
+    @ApiOperation(value = "Delete a restaurant")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @DeleteMapping("")
+    public Object deleteRestaurant(
+            @ApiParam("id") @RequestParam Long id) {
+        Restaurant restaurant = restaurantRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException(Restaurant.class, id));
+
+        restaurantRepository.delete(restaurant);
+        return genericMessage("Restaurant with id %s deleted".formatted(id));
+    }
+
     @ApiOperation(value = "Update a single restaurant")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PutMapping("")

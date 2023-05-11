@@ -68,7 +68,6 @@ public class BookController extends ApiController {
 
         return savedBook;
     }
-
     @ApiOperation(value = "Update a single book")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PutMapping("")
