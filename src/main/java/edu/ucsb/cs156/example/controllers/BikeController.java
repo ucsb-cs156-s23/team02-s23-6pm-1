@@ -75,4 +75,16 @@ public class BikeController extends ApiController {
 
         return bike;
     }
+
+    @ApiOperation(value = "Delete a Bike")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @DeleteMapping("")
+    public Object deleteBike(
+            @ApiParam("code") @RequestParam Long id) {
+        Bike bike = bikeRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException(Bike.class, id));
+
+        bikeRepository.delete(bike);
+        return genericMessage("Bike with id %s deleted".formatted(id));
+    }
 }
