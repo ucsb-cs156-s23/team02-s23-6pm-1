@@ -11,6 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+
 @Api(description = "Restaurants")
 @RequestMapping("/api/restaurants")
 @RestController
@@ -66,5 +68,24 @@ public class RestaurantsController extends ApiController {
 
         restaurantRepository.delete(restaurant);
         return genericMessage("Restaurant with id %s deleted".formatted(id));
+    }
+
+    @ApiOperation(value = "Update a single restaurant")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PutMapping("")
+    public Restaurant updateRestaurant(
+            @ApiParam("id") @RequestParam Long id,
+            @RequestBody @Valid Restaurant incoming) {
+
+        Restaurant restaurant = restaurantRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException(Restaurant.class, id));
+
+        restaurant.setName(incoming.getName());
+        restaurant.setAddress(incoming.getAddress());
+        restaurant.setDescription(incoming.getDescription());
+
+        restaurantRepository.save(restaurant);
+
+        return restaurant;
     }
 }
