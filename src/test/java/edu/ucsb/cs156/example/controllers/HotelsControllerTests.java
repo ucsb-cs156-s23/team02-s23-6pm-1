@@ -21,8 +21,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 
-import java.time.LocalDateTime;
-
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -57,12 +55,11 @@ public class HotelsControllerTests extends ControllerTestCase {
                                 .andExpect(status().is(200)); // logged
         }
 
-        /*
         @Test
         public void logged_out_users_cannot_get_by_id() throws Exception {
                 mockMvc.perform(get("/api/hotels?id=7"))
                                 .andExpect(status().is(403)); // logged out users can't get by id
-        } */
+        }
 
         // Authorization tests for /api/hotels/post
         // (Perhaps should also have these for put and delete)
@@ -81,19 +78,17 @@ public class HotelsControllerTests extends ControllerTestCase {
         }
 
         // // Tests with mocks for database actions
-        /*
         @WithMockUser(roles = { "USER" })
         @Test
         public void test_that_logged_in_user_can_get_by_id_when_the_id_exists() throws Exception {
 
                 // arrange
-                LocalDateTime ldt = LocalDateTime.parse("2022-01-03T00:00:00");
 
                 Hotel hotel = Hotel.builder()
-                                .name("Mariott")
-                                .address("Goleta, California")
-                                .description("Nice")
-                                .build();
+                .name("Courtyard by Marriott Santa Barbara Goleta")
+                .address("401 Storke Rd, Goleta, CA 93117")
+                .description("3-star hotel")
+                .build();
 
                 when(hotelRepository.findById(eq(7L))).thenReturn(Optional.of(hotel));
 
@@ -127,15 +122,12 @@ public class HotelsControllerTests extends ControllerTestCase {
                 Map<String, Object> json = responseToJson(response);
                 assertEquals("EntityNotFoundException", json.get("type"));
                 assertEquals("Hotel with id 7 not found", json.get("message"));
-        } */
+        }
 
         @WithMockUser(roles = { "USER" })
         @Test
         public void logged_in_user_can_get_all_hotels() throws Exception {
-
                 // arrange
-                LocalDateTime ldt1 = LocalDateTime.parse("2022-01-03T00:00:00");
-
                 Hotel hotel1 = Hotel.builder()
                 .name("Courtyard by Marriott Santa Barbara Goleta")
                 .address("401 Storke Rd, Goleta, CA 93117")
@@ -148,10 +140,10 @@ public class HotelsControllerTests extends ControllerTestCase {
                 .description("3-star hotel")
                 .build();
 
-                ArrayList<Hotel> expectedDates = new ArrayList<>();
-                expectedDates.addAll(Arrays.asList(hotel1, hotel2));
+                ArrayList<Hotel> expectedHotels = new ArrayList<>();
+                expectedHotels.addAll(Arrays.asList(hotel1, hotel2));
 
-                when(hotelRepository.findAll()).thenReturn(expectedDates);
+                when(hotelRepository.findAll()).thenReturn(expectedHotels);
 
                 // act
                 MvcResult response = mockMvc.perform(get("/api/hotels/all"))
@@ -160,7 +152,7 @@ public class HotelsControllerTests extends ControllerTestCase {
                 // assert
 
                 verify(hotelRepository, times(1)).findAll();
-                String expectedJson = mapper.writeValueAsString(expectedDates);
+                String expectedJson = mapper.writeValueAsString(expectedHotels);
                 String responseString = response.getResponse().getContentAsString();
                 assertEquals(expectedJson, responseString);
         }
@@ -191,18 +183,16 @@ public class HotelsControllerTests extends ControllerTestCase {
                 assertEquals(expectedJson, responseString);
         }
 
-        /* 
+        
         @WithMockUser(roles = { "ADMIN", "USER" })
         @Test
-        public void admin_can_delete_a_date() throws Exception {
+        public void admin_can_delete_a_hotel() throws Exception {
                 // arrange
 
-                LocalDateTime ldt1 = LocalDateTime.parse("2022-01-03T00:00:00");
-
                 Hotel hotel1 = Hotel.builder()
-                .name("Mariott")
-                .address("Goleta, California")
-                .description("Nice")
+                .name("Courtyard by Marriott Santa Barbara Goleta")
+                .address("401 Storke Rd, Goleta, CA 93117")
+                .description("3-star hotel")
                 .build();
 
                 when(hotelRepository.findById(eq(15L))).thenReturn(Optional.of(hotel1));
@@ -223,7 +213,7 @@ public class HotelsControllerTests extends ControllerTestCase {
 
         @WithMockUser(roles = { "ADMIN", "USER" })
         @Test
-        public void admin_tries_to_delete_non_existant_ucsbdate_and_gets_right_error_message()
+        public void admin_tries_to_delete_non_existant_hotel_and_gets_right_error_message()
                         throws Exception {
                 // arrange
 
@@ -243,23 +233,20 @@ public class HotelsControllerTests extends ControllerTestCase {
 
         @WithMockUser(roles = { "ADMIN", "USER" })
         @Test
-        public void admin_can_edit_an_existing_ucsbdate() throws Exception {
+        public void admin_can_edit_an_existing_hotel() throws Exception {
                 // arrange
 
-                LocalDateTime ldt1 = LocalDateTime.parse("2022-01-03T00:00:00");
-                LocalDateTime ldt2 = LocalDateTime.parse("2023-01-03T00:00:00");
-
                 Hotel hotelOrig = Hotel.builder()
-                .name("Mariott")
-                .address("Goleta, California")
-                .description("Nice")
+                .name("Courtyard by Marriott Santa Barbara Goleta")
+                .address("401 Storke Rd, Goleta, CA 93117")
+                .description("3-star hotel")
                 .build();
 
                 Hotel hotelEdited = Hotel.builder()
-                                .name("firstDayOfFestivus")
-                                .quarterYYYYQ("20232")
-                                .localDateTime(ldt2)
-                                .build();
+                .name("Hyatt Place Santa Barbara")
+                .address("4111 State St, Santa Barbara, CA 93110")
+                .description("3-star hotel")
+                .build();
 
                 String requestBody = mapper.writeValueAsString(hotelEdited);
 
@@ -283,18 +270,16 @@ public class HotelsControllerTests extends ControllerTestCase {
 
         @WithMockUser(roles = { "ADMIN", "USER" })
         @Test
-        public void admin_cannot_edit_ucsbdate_that_does_not_exist() throws Exception {
+        public void admin_cannot_edit_hotel_that_does_not_exist() throws Exception {
                 // arrange
 
-                LocalDateTime ldt1 = LocalDateTime.parse("2022-01-03T00:00:00");
+                Hotel hotelEdited = Hotel.builder()
+                .name("Courtyard by Marriott Santa Barbara Goleta")
+                .address("401 Storke Rd, Goleta, CA 93117")
+                .description("3-star hotel")
+                .build();
 
-                Hotel ucsbEditedDate = Hotel.builder()
-                                .name("firstDayOfClasses")
-                                .quarterYYYYQ("20222")
-                                .localDateTime(ldt1)
-                                .build();
-
-                String requestBody = mapper.writeValueAsString(ucsbEditedDate);
+                String requestBody = mapper.writeValueAsString(hotelEdited);
 
                 when(hotelRepository.findById(eq(67L))).thenReturn(Optional.empty());
 
@@ -312,5 +297,5 @@ public class HotelsControllerTests extends ControllerTestCase {
                 Map<String, Object> json = responseToJson(response);
                 assertEquals("Hotel with id 67 not found", json.get("message"));
 
-        }*/
+        }
 }

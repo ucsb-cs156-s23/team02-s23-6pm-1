@@ -43,7 +43,6 @@ public class HotelsController extends ApiController {
         return hotels;
     }
 
-    /* 
     @ApiOperation(value = "Get a single hotel")
     @PreAuthorize("hasRole('ROLE_USER')")
     @GetMapping("")
@@ -53,7 +52,7 @@ public class HotelsController extends ApiController {
                 .orElseThrow(() -> new EntityNotFoundException(Hotel.class, id));
 
         return hotel;
-    }*/
+    }
 
     @ApiOperation(value = "Create a new hotel")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
@@ -67,8 +66,6 @@ public class HotelsController extends ApiController {
         // For an explanation of @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
         // See: https://www.baeldung.com/spring-date-parameters
 
-        // log.info("localDateTime={}", localDateTime);
-
         Hotel hotel = new Hotel();
         hotel.setName(name);
         hotel.setAddress(address);
@@ -79,7 +76,6 @@ public class HotelsController extends ApiController {
         return savedHotel;
     }
 
-    /*
     @ApiOperation(value = "Delete a Hotel")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @DeleteMapping("")
@@ -92,7 +88,7 @@ public class HotelsController extends ApiController {
         return genericMessage("Hotel with id %s deleted".formatted(id));
     }
 
-    @ApiOperation(value = "Update a single date")
+    @ApiOperation(value = "Update a single hotel")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PutMapping("")
     public Hotel updateHotel(
@@ -109,5 +105,5 @@ public class HotelsController extends ApiController {
         hotelRepository.save(hotel);
 
         return hotel;
-    } */
+    }
 }
