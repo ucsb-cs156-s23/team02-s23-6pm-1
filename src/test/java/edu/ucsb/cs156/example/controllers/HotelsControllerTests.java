@@ -21,8 +21,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 
-import java.time.LocalDateTime;
-
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -129,10 +127,7 @@ public class HotelsControllerTests extends ControllerTestCase {
         @WithMockUser(roles = { "USER" })
         @Test
         public void logged_in_user_can_get_all_hotels() throws Exception {
-
                 // arrange
-                LocalDateTime ldt1 = LocalDateTime.parse("2022-01-03T00:00:00");
-
                 Hotel hotel1 = Hotel.builder()
                 .name("Courtyard by Marriott Santa Barbara Goleta")
                 .address("401 Storke Rd, Goleta, CA 93117")
@@ -145,10 +140,10 @@ public class HotelsControllerTests extends ControllerTestCase {
                 .description("3-star hotel")
                 .build();
 
-                ArrayList<Hotel> expectedDates = new ArrayList<>();
-                expectedDates.addAll(Arrays.asList(hotel1, hotel2));
+                ArrayList<Hotel> expectedHotels = new ArrayList<>();
+                expectedHotels.addAll(Arrays.asList(hotel1, hotel2));
 
-                when(hotelRepository.findAll()).thenReturn(expectedDates);
+                when(hotelRepository.findAll()).thenReturn(expectedHotels);
 
                 // act
                 MvcResult response = mockMvc.perform(get("/api/hotels/all"))
@@ -157,7 +152,7 @@ public class HotelsControllerTests extends ControllerTestCase {
                 // assert
 
                 verify(hotelRepository, times(1)).findAll();
-                String expectedJson = mapper.writeValueAsString(expectedDates);
+                String expectedJson = mapper.writeValueAsString(expectedHotels);
                 String responseString = response.getResponse().getContentAsString();
                 assertEquals(expectedJson, responseString);
         }
@@ -275,7 +270,7 @@ public class HotelsControllerTests extends ControllerTestCase {
 
         @WithMockUser(roles = { "ADMIN", "USER" })
         @Test
-        public void admin_cannot_edit_ucsbdate_that_does_not_exist() throws Exception {
+        public void admin_cannot_edit_hotel_that_does_not_exist() throws Exception {
                 // arrange
 
                 Hotel hotelEdited = Hotel.builder()
