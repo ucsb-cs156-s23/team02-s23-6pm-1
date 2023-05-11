@@ -1,6 +1,7 @@
 package edu.ucsb.cs156.example.controllers;
 
 import edu.ucsb.cs156.example.entities.Restaurant;
+import edu.ucsb.cs156.example.errors.EntityNotFoundException;
 import edu.ucsb.cs156.example.repositories.RestaurantRepository;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -26,6 +27,18 @@ public class RestaurantsController extends ApiController {
         return restaurantRepository.findAll();
     }
 
+
+    @ApiOperation(value = "Get a single restaurant")
+    @PreAuthorize("hasRole('ROLE_USER')")
+    @GetMapping("")
+    public Restaurant getById(
+            @ApiParam("id") @RequestParam Long id
+    ) {
+
+        return restaurantRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException(Restaurant.class, id));
+    }
+
     @ApiOperation(value = "Create a restaurant")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping("/post")
@@ -42,4 +55,6 @@ public class RestaurantsController extends ApiController {
 
         return restaurantRepository.save(restaurant);
     }
+
+
 }
