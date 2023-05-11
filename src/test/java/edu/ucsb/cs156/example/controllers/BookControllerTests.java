@@ -132,20 +132,20 @@ public class BookControllerTests extends ControllerTestCase {
         */
         @WithMockUser(roles = { "USER" })
         @Test
-        public void logged_in_user_can_get_all_ucsbdiningcommons() throws Exception {
+        public void logged_in_user_can_get_all_book() throws Exception {
 
                 // arrange
 
                 Book greenEggs = Book.builder()
-                                .name("Green Eggs and Ham")
+                                .name("GreenEggsAndHam")
                                 .genre("Poetry")
-                                .author("Dr.Seuss")
+                                .author("DrSeuss")
                                 .build();
 
                 Book hrrPtr = Book.builder()
-                                .name("Harry Potter")
+                                .name("HarryPotter")
                                 .genre("Fantasy")
-                                .author("JK Rowling")
+                                .author("JKRowling")
                                 .build();
 
                 ArrayList<Book> expectedBooks = new ArrayList<>();
@@ -167,20 +167,20 @@ public class BookControllerTests extends ControllerTestCase {
 
         @WithMockUser(roles = { "ADMIN", "USER" })
         @Test
-        public void an_admin_user_can_post_a_new_commons() throws Exception {
+        public void an_admin_user_can_post_a_new_book() throws Exception {
                 // arrange
 
                 Book greenEggs = Book.builder()
-                                .name("Green Eggs and Ham")
+                                .name("GreenEggsAndHam")
                                 .genre("Poetry")
-                                .author("Dr.Seuss")
+                                .author("DrSeuss")
                                 .build();
 
                 when(bookRepository.save(eq(greenEggs))).thenReturn(greenEggs);
 
                 // act
                 MvcResult response = mockMvc.perform(
-                                post("/api/book/post?name=greenEggs&genre=Poetry&author=Dr.Seuss")
+                                post("/api/book/post?name=GreenEggsAndHam&genre=Poetry&author=DrSeuss")
                                                 .with(csrf()))
                                 .andExpect(status().isOk()).andReturn();
 

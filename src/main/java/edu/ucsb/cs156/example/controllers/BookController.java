@@ -43,7 +43,6 @@ public class BookController extends ApiController {
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping("/post")
     public Book postBooks(
-        @ApiParam("id") @RequestParam Long id,
         @ApiParam("name") @RequestParam String name,
         @ApiParam("author") @RequestParam String author,
         @ApiParam("genre") @RequestParam String genre
