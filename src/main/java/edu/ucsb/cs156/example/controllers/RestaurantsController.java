@@ -27,6 +27,18 @@ public class RestaurantsController extends ApiController {
         return restaurantRepository.findAll();
     }
 
+
+    @ApiOperation(value = "Get a single restaurant")
+    @PreAuthorize("hasRole('ROLE_USER')")
+    @GetMapping("")
+    public Restaurant getById(
+            @ApiParam("id") @RequestParam Long id
+    ) {
+
+        return restaurantRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException(Restaurant.class, id));
+    }
+
     @ApiOperation(value = "Create a restaurant")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping("/post")
