@@ -79,7 +79,6 @@ public class HotelsController extends ApiController {
         return savedHotel;
     }
 
-    /*
     @ApiOperation(value = "Delete a Hotel")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @DeleteMapping("")
@@ -92,6 +91,7 @@ public class HotelsController extends ApiController {
         return genericMessage("Hotel with id %s deleted".formatted(id));
     }
 
+    /*
     @ApiOperation(value = "Update a single date")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PutMapping("")

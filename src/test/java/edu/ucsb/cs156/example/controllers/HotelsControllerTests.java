@@ -191,18 +191,16 @@ public class HotelsControllerTests extends ControllerTestCase {
                 assertEquals(expectedJson, responseString);
         }
 
-        /* 
+        
         @WithMockUser(roles = { "ADMIN", "USER" })
         @Test
-        public void admin_can_delete_a_date() throws Exception {
+        public void admin_can_delete_a_hotel() throws Exception {
                 // arrange
 
-                LocalDateTime ldt1 = LocalDateTime.parse("2022-01-03T00:00:00");
-
                 Hotel hotel1 = Hotel.builder()
-                .name("Mariott")
-                .address("Goleta, California")
-                .description("Nice")
+                .name("Courtyard by Marriott Santa Barbara Goleta")
+                .address("401 Storke Rd, Goleta, CA 93117")
+                .description("3-star hotel")
                 .build();
 
                 when(hotelRepository.findById(eq(15L))).thenReturn(Optional.of(hotel1));
@@ -223,7 +221,7 @@ public class HotelsControllerTests extends ControllerTestCase {
 
         @WithMockUser(roles = { "ADMIN", "USER" })
         @Test
-        public void admin_tries_to_delete_non_existant_ucsbdate_and_gets_right_error_message()
+        public void admin_tries_to_delete_non_existant_hotel_and_gets_right_error_message()
                         throws Exception {
                 // arrange
 
@@ -241,6 +239,7 @@ public class HotelsControllerTests extends ControllerTestCase {
                 assertEquals("Hotel with id 15 not found", json.get("message"));
         }
 
+        /*
         @WithMockUser(roles = { "ADMIN", "USER" })
         @Test
         public void admin_can_edit_an_existing_ucsbdate() throws Exception {
