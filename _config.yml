@@ -23,4 +23,4 @@ repo_name: "TBD"
 repo: ucsb-cs156-s23/team02-s23-6pm-1
 owner: ucsb-cs156-s23
 repo_name: team02-s23-6pm-1
-pull_requests: [{"author":{"id":"U_kgDOBXzGpA","is_bot":false,"login":"albertyu03","name":"Albert Yu"},"headRefName":"Albert-BookDel","number":65,"title":"ay - adding delete endpoint to Book table","url":"https://github.com/ucsb-cs156-s23/team02-s23-6pm-1/pull/65"}]
+pull_requests: [{"author":{"id":"U_kgDOBX6DSQ","is_bot":false,"login":"mfletcher2","name":"Max Fletcher"},"headRefName":"max-bikedelete","number":66,"title":"mf: Add DELETE endpoint for Bikes","url":"https://github.com/ucsb-cs156-s23/team02-s23-6pm-1/pull/66"},{"author":{"id":"U_kgDOBXzGpA","is_bot":false,"login":"albertyu03","name":"Albert Yu"},"headRefName":"Albert-BookDel","number":65,"title":"ay - adding delete endpoint to Book table","url":"https://github.com/ucsb-cs156-s23/team02-s23-6pm-1/pull/65"}]
