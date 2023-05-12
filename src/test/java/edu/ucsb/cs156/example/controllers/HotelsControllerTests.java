@@ -137,7 +137,7 @@ public class HotelsControllerTests extends ControllerTestCase {
                 Hotel hotel2 = Hotel.builder()
                 .name("Hyatt Place Santa Barbara")
                 .address("4111 State St, Santa Barbara, CA 93110")
-                .description("3-star hotel")
+                .description("3-star hotel, Small")
                 .build();
 
                 ArrayList<Hotel> expectedHotels = new ArrayList<>();
@@ -245,7 +245,7 @@ public class HotelsControllerTests extends ControllerTestCase {
                 Hotel hotelEdited = Hotel.builder()
                 .name("Hyatt Place Santa Barbara")
                 .address("4111 State St, Santa Barbara, CA 93110")
-                .description("3-star hotel")
+                .description("3-star hotel, Small")
                 .build();
 
                 String requestBody = mapper.writeValueAsString(hotelEdited);
