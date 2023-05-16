@@ -11,7 +11,6 @@ import lombok.extern.slf4j.Slf4j;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,8 +22,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
-
-import java.time.LocalDateTime;
 
 @Api(description = "Hotels")
 @RequestMapping("/api/hotels")
@@ -39,19 +36,17 @@ public class HotelsController extends ApiController {
     @PreAuthorize("hasRole('ROLE_USER')")
     @GetMapping("/all")
     public Iterable<Hotel> allHotels() {
-        Iterable<Hotel> hotels = hotelRepository.findAll();
-        return hotels;
+        return hotelRepository.findAll();
     }
 
     @ApiOperation(value = "Get a single hotel")
     @PreAuthorize("hasRole('ROLE_USER')")
     @GetMapping("")
     public Hotel getById(
-            @ApiParam("id") @RequestParam Long id) {
-        Hotel hotel = hotelRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException(Hotel.class, id));
-
-        return hotel;
+        @ApiParam("id") @RequestParam Long id
+    ) {
+    return hotelRepository.findById(id)
+            .orElseThrow(() -> new EntityNotFoundException(Hotel.class, id));
     }
 
     @ApiOperation(value = "Create a new hotel")
@@ -63,17 +58,12 @@ public class HotelsController extends ApiController {
             @ApiParam("description") @RequestParam String description)
             throws JsonProcessingException {
 
-        // For an explanation of @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-        // See: https://www.baeldung.com/spring-date-parameters
-
-        Hotel hotel = new Hotel();
-        hotel.setName(name);
-        hotel.setAddress(address);
-        hotel.setDescription(description);
-
-        Hotel savedHotel = hotelRepository.save(hotel);
-
-        return savedHotel;
+            var hotel = Hotel.builder()
+                .name(name)
+                .address(address)
+                .description(description)
+                .build();
+        return hotelRepository.save(hotel);
     }
 
     @ApiOperation(value = "Delete a Hotel")
