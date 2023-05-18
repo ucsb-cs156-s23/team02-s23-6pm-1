@@ -22,5 +22,5 @@ public class Movie {
 
     private String name;
     private String synopsis;
-    private String cast;
+    private String castMembers;
 }
