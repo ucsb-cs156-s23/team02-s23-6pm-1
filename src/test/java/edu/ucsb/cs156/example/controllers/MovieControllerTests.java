@@ -79,7 +79,7 @@ public class MovieControllerTests extends ControllerTestCase {
         public void test_that_logged_in_user_can_get_by_id_when_the_id_exists() throws Exception {
 
                 // arrange
-                Movoe movie = Movie.builder()
+                Movie movie = Movie.builder()
                         .name("good movie")
                         .synopsis("good plot")
                         .castMembers("good cast")
@@ -226,7 +226,7 @@ public class MovieControllerTests extends ControllerTestCase {
                         .andExpect(status().isNotFound()).andReturn();
 
                 // assert
-                verify(Repository, times(1)).findById(15L);
+                verify(movieRepository, times(1)).findById(15L);
                 Map<String, Object> json = responseToJson(response);
                 assertEquals("Movie with id 15 not found", json.get("message"));
         }

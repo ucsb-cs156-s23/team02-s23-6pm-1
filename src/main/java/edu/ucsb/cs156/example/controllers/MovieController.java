@@ -46,13 +46,13 @@ public class MovieController extends ApiController {
     public Movie postMovie(
             @ApiParam("name") @RequestParam String name,
             @ApiParam("synopsis") @RequestParam String synopsis,
-            @ApiParam("castMembers") @RequestParam int castMembers)
+            @ApiParam("castMembers") @RequestParam String castMembers)
             throws JsonProcessingException {
 
         Movie movie = new Movie();
         movie.setName(name);
         movie.setSynopsis(synopsis);
-        movie.setCastMambers(castMembers);
+        movie.setCastMembers(castMembers);
 
         return movieRepository.save(movie);
     }
@@ -69,7 +69,7 @@ public class MovieController extends ApiController {
 
         movie.setName(incoming.getName());
         movie.setSynopsis(incoming.getSynopsis());
-        movie.setCastMambers(incoming.getCastMemebers());
+        movie.setCastMembers(incoming.getCastMembers());
 
         movieRepository.save(movie);
 
